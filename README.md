@@ -46,6 +46,7 @@ An end-to-end instance segmentation pipeline that detects and delineates corrode
 | Weight decay | 0.0005 |
 | Train samples used | 3,000 (subsampled for Colab speed) |
 | Augmentations | Horizontal flip, vertical flip, brightness/contrast jitter |
+| Hardware | Google Colab (NVIDIA GPU) |
 
 ---
 
@@ -68,38 +69,105 @@ Best validation loss: **0.5448** (epoch 12)
 
 ```
 ├── project.ipynb          # Full pipeline notebook (dataset → train → eval → inference)
-├── XIS.pdf                # Original assessment brief
+├── run_inference.py       # Standalone local inference script
+├── best_model.pth         # Trained model weights (tracked via Git LFS)
+├── requirements.txt       # Python dependencies
+├── Documentation.pdf      # Full technical report
 └── README.md
 ```
 
 ---
 
-## How to Run
+## Local Inference — Quick Start
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Muhdshayan/Corrosion-detection-Computer-Vision.git
+cd Corrosion-detection-Computer-Vision
+```
+
+### 2. Create and activate a virtual environment
+
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
+
+# macOS / Linux
+python -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run inference
+
+**On a single image:**
+```bash
+python run_inference.py path/to/your/image.jpg
+```
+
+**On a whole folder of images:**
+```bash
+python run_inference.py                  # defaults to test/ folder
+python run_inference.py my_images/       # or specify any folder
+```
+
+Results are saved automatically to the `outputs/` folder as side-by-side comparison images (original | predicted mask overlay).
+
+### Example output
+
+```
+  Device : CPU
+  Loading model: best_model.pth
+  Model ready.
+
+  Processing 50 images from 'test/'
+  Results will be saved to 'outputs/'
+
+  Image                                           Detections
+  ----------------------------------------------------------
+  Corrosion2317...jpg            →  4 instance(s) detected
+  Corrosion2335...jpg            →  2 instance(s) detected
+  GEN_103...jpg                  →  2 instance(s) detected
+  ...
+
+  Done. All results saved → outputs/
+```
+
+---
+
+## Google Colab — Full Pipeline
 
 1. Upload `project.ipynb` to **Google Colab**
 2. Place the dataset zip at `MyDrive/Dataset/Corrosion Detection.v1i.coco-segmentation.zip`
-3. Run cells sequentially — each cell is labelled by phase:
+3. Run cells sequentially:
    - **Cell 1–2**: Mount Drive & unzip dataset
    - **Cell 3–4**: Dataset inspection & visualisation
    - **Cell 5**: Model training (saves `best_model.pth`)
-   - **Cell 6**: Evaluation — computes all metrics
+   - **Cell 6**: Evaluation — computes all 6 metrics
    - **Cell 7–8**: Inference on new images
-
-To run inference on a single new image:
-```python
-run_inference("path/to/image.jpg", score_threshold=0.5)
-```
 
 ---
 
 ## Dependencies
 
 ```
-torch, torchvision, pycocotools, Pillow, matplotlib, numpy, tqdm
+torch>=2.1.0
+torchvision>=0.16.0
+Pillow>=9.5.0
+numpy>=1.24.0
+pycocotools>=2.0.7
+matplotlib>=3.7.0
+tqdm>=4.66.0
 ```
 
-Install with:
+Install all with:
 ```bash
-pip install pycocotools
+pip install -r requirements.txt
 ```
-All other dependencies are pre-installed in Google Colab.
