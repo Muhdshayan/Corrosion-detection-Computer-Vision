@@ -4,8 +4,8 @@ venv/
 # Inference outputs (generated, not source)
 outputs/
 
-# Test images (large dataset files)
-test/
+# Test images — tracked so others can test the model locally
+# test/
 
 # Python cache
 __pycache__/
@@ -23,3 +23,4 @@ inspect_*.py
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
